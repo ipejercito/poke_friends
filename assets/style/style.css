@@ -1,0 +1,26 @@
+*{
+	padding:0px;
+	margin:0px;
+}
+
+.brand:hover{
+
+	text-decoration:none;
+	color:#7EC0EE;
+}
+
+#form_register{
+	margin-top: 73px;
+}
+
+#form_login{
+	margin-top: 73px;
+}
+
+.users_list{
+	margin-top:5px;
+}
+
+.h2_dashboard{
+	margin-top: 50px;
+}
