@@ -24,3 +24,11 @@
 .h2_dashboard{
 	margin-top: 50px;
 }
+
+.panel_pokes_list{
+	width:450px;
+}
+
+.append_panel_head{
+	text-align:center;
+}
