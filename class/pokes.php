@@ -12,6 +12,8 @@
 			$this->template = new Template();
 			if(isset($_POST["action"]) && $_POST["action"] == "add_poke")
 				$this->add_poke();
+			if(isset($_POST["action"]) && $_POST["action"] == "view_pokes_history")
+				$this->view_pokes_history();
 		}
 
 		protected function add_poke()
@@ -97,6 +99,41 @@
 					  WHERE pokes.other_user_id ='".$user_id."'
 					  GROUP BY users.id";
 			return $this->fetch_all($query);
+		}
+
+		public function view_pokes_history()
+		{
+			$poke_html = "";
+			$query = "SELECT users.id, users.first_name, users.last_name, users.email,
+					  pokes.my_user_id, pokes.other_user_id, pokes.created_at
+					  FROM pokes LEFT JOIN users ON users.id = pokes.my_user_id
+					  WHERE pokes.other_user_id ='".$_SESSION["user_info"]["user_id"].
+					  "'AND pokes.my_user_id =".$_POST["other_user_id"];
+			$persons_poked_me = $this->fetch_all($query);
+
+
+			if(count($persons_poked_me) > 0)
+			{
+				$data["status"] = TRUE;
+				foreach($persons_poked_me as $person_poked_me)
+				{
+					$poke_html .="<tr>
+									<td>".$person_poked_me["first_name"]." ".$person_poked_me["last_name"]."</td>
+									<td>".$person_poked_me["email"]."</td>
+									<td>".date_format(date_create($person_poked_me["created_at"]),'g:ia \o\n l jS F Y')."</td>
+								  </tr>";
+				}	
+				$data["message"] = $poke_html;
+			}
+			else
+			{
+				$data["status"] = FALSE;
+				$data["message"] = $this->template->success_error_htm(FALSE) .
+								   "Something went wrong while fetching your pokes".
+								   $this->template->error_success_after();
+			}
+
+			echo json_encode($data);
 		}
 
 	}
