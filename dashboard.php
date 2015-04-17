@@ -17,12 +17,13 @@
 	<link rel="stylesheet" href="assets/style/style.css">
 	<link rel="stylesheet" href="assets/style/bootstrap.css">
 	<script type="text/javascript" src="assets/js/jquery.js"></script>
+	<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
 
 			var number_of_people = $("span.number_of_people").length;
 			if(number_of_people > 0){
-				$(".h2_dashboard").append('<h4>"There are <b>'+number_of_people+'</b> people who poked you"');
+				$(".append_panel_head").append('<h4>There are <b>'+number_of_people+'</b> people who poked you');
 			}else{
 				$("div.well").removeClass("col-md-3");
 				$("div.well").css("width","162px").prepend("<h4><strong>No Pokes Yet!</strong></h4>");
@@ -74,6 +75,20 @@
 				},"json");
 				return false;
 			});
+
+			$(".form_who_poke").on("submit", function(){
+				var form = $(this);
+
+				$.post(form.attr("action"), form.serialize(), function(data){
+					if(data.status){
+						$(".modal_view_pokes").html(data.message);
+					}else{
+
+					}
+				},"json");
+
+				return false;
+			});
 			
 		})
 	</script>
@@ -83,13 +98,37 @@
 		<div class="row">
 			<?= include("./assets/includes/header.php") ?>
 			<h2 class="h2_dashboard">Welcome <?= $_SESSION['user_info']['first_name'] ?> <?= $_SESSION['user_info']['last_name'] ?></h2>
-			<div class="well col-md-3">
-<?php 		foreach($pokes->get_who_poked_me($_SESSION['user_info']['user_id']) as $other_pokes)
-			{	?>
-				<span class="number_of_people"></span>
-				<h5><?= $other_pokes["first_name"] ?> <?= $other_pokes["last_name"] ?> poked you <strong><?= $other_pokes["number_of_pokes"] ?> times</strong></h5>
-	<?php 	}	?>
+			<div class="panel panel-default panel_pokes_list">
+				<div class="panel-heading append_panel_head"></div>
+				<table class="table">
+				<tr>
+						<th>Person who poke you</th>
+						<th>Pokes History</th>
+				</tr>
+				<tbody>
+	<?php 		foreach($pokes->get_who_poked_me($_SESSION['user_info']['user_id']) as $other_pokes)
+				{	?>
+					<span class="number_of_people"></span>
+					<h5>
+					</h5>
+					
+					<tr>
+						<td><?= $other_pokes["first_name"] ?> <?= $other_pokes["last_name"] ?> 
+						poked you <strong><?= $other_pokes["number_of_pokes"] ?> times</strong></td>
+						<td>
+							<form action="class/pokes.php" method="post" class="form_who_poke">
+								<input type="hidden" name="action" value="view_pokes_history">
+								<input type="hidden" name="my_user_id" value="<?= $_SESSION['user_info']['user_id'] ?>">
+								<input type="hidden" name="other_user_id" value="<?= $other_pokes["my_user_id"] ?>">
+								<input type="submit" value="view" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">
+							</form>
+						</td>
+					</tr>
+		<?php 	}	?>
+				</tbody>	
+				</table>
 			</div>
+
 			<div class="clearfix"></div>
 			<h3>List of persons you can poke</h3>
 			<table class="table table-striped users_list">
@@ -121,6 +160,8 @@
 			</table>
 			<div class="message"></div>
 		</div>
+		
+		
 		<div class="row" id="second_row">
 	<?php 	
 		if(count($pokes->get_poked_users($_SESSION['user_info']['user_id'])) > 0)
@@ -151,6 +192,36 @@
 			<span id="no_pokes"></span>
 <?php	}	?>
 		</div>
+	</div>
+
+	<!-- Large modal section -->
+	
+
+		<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">Modal title</h4>
+					</div>
+					<div class="modal-body">
+					<table class="table table-striped">
+						<tr>
+							<th>Name</th>
+							<th>Email</th>
+							<th>Poke Date</th>
+						</tr>
+						<tbody class="modal_view_pokes"></tbody>
+					</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary">Save changes</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 	</div>
 </body>
 </html>
