@@ -21,9 +21,13 @@
 
 				$.post(form.attr("action"), form.serialize(), function(data){
 					if(data.status){
-						$(".message").html(data.message);
+						$(".message").html(data.message).fadeIn(500, function(){
+							$(this).delay(3000).fadeOut(500);
+						});
 					}else{
-						$(".message").html(data.message);
+						$(".message").html(data.message).fadeIn(500, function(){
+							$(this).delay(3000).fadeOut(500);
+						});
 					}
 				},'json');
 
@@ -35,12 +39,16 @@
 
 				$.post(form.attr("action"), form.serialize(), function(data){
 					if(data.status){
-						$(".message").html(data.message);
+						$(".message").html(data.message).fadeIn(500, function(){
+							$(this).delay(3000).fadeOut(500);
+						});
 						setTimeout(function(){
 							window.location = data.url_redirect;
 						},3000);
 					}else{
-						$(".message").html(data.message);
+						$(".message").html(data.message).fadeIn(500, function(){
+							$(this).delay(3000).fadeOut(500);
+						});;
 					}
 				},"json");
 

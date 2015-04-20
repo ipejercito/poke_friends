@@ -16,8 +16,10 @@
 	<title>Document</title>
 	<link rel="stylesheet" href="assets/style/style.css">
 	<link rel="stylesheet" href="assets/style/bootstrap.css">
+	<link rel="stylesheet" href="assets/style/jquery_ui_smoothness.css">
 	<script type="text/javascript" src="assets/js/jquery.js"></script>
 	<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="assets/js/jquery_ui.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
 
@@ -33,6 +35,10 @@
 			var no_pokes = document.getElementById("no_pokes");
 			if(no_pokes != null){
 				$("#no_pokes").append("<h3 class='text-center no_pokes_text'><strong>No Pokes Yet</strong></h3>")
+			}
+
+			function blinker(number){
+				$(number).fadeIn(3000);
 			}
 			
 
@@ -53,7 +59,12 @@
 							id_array.push(val.id);
 							if(val.id == data.user_poke){
 								increment_poke = $(this).children("td:last-child").text();
-								$(this).children("td:last-child").text(parseInt(increment_poke) + 1)
+								$(this).children("td:last-child").text(parseInt(increment_poke) + 1);
+
+								$(this).children("td:last-child").css({"color":"red","font-weight":"bold"}).animate({color:"red"},1500,function(){
+									$(this).css({"color":"red","font-weight":"bold"}).animate({color:"#333"},1500).css({"font-weight":"normal"});
+								});
+								
 							}
 						});
 
@@ -67,7 +78,9 @@
 							$(".your_pokes").append(data.recent_user_poke);
 						}
 
-						$(".message").html("<div class='alert alert-success col-md-6 col-md-6 col-md-offset-3 text-center'><strong>You've just poke "+name+"</strong></div>");
+						$(".message").hide().html("<div class='alert alert-success col-md-6 col-md-6 col-md-offset-3 text-center'><strong>You've just poke "+name+"</strong></div>").fadeIn(1000, function(){
+							$(this).delay(4000).fadeOut(1000);
+						});
 						
 					}else{
 						$(".message").html(data.message);
@@ -81,7 +94,9 @@
 
 				$.post(form.attr("action"), form.serialize(), function(data){
 					if(data.status){
-						$(".modal_view_pokes").html(data.message);
+						$(".modal_view_pokes").html(data.message).fadeIn(500, function(){
+							$(this).delay(3000).fadeOut(500);
+						});
 					}else{
 
 					}
@@ -181,7 +196,7 @@
 					<tr id="<?= $user_pokes["other_user_id"] ?>">
 						<td><?= $user_pokes["first_name"] ?> <?= $user_pokes["last_name"] ?></td>
 						<td><?= $user_pokes["email"] ?></td>
-						<td><?= $user_pokes["number_of_pokes"] ?></td>
+						<td id="blink_pokes_<?= $user_pokes["other_user_id"] ?>" ><?= $user_pokes["number_of_pokes"] ?></td>
 					</tr>
 			<?php 	}	?>					
 				</tbody>
