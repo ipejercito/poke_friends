@@ -19,7 +19,9 @@
 		protected function add_poke()
 		{
 			$query = "INSERT INTO pokes(my_user_id, other_user_id, status, created_at)
-					  VALUE('".$_POST["my_user_id"]."','".$_POST["other_user_id"]."',1,NOW())";
+					  VALUE('".mysqli_real_escape_string($this->connection, $_POST["my_user_id"])."',
+					  	'".mysqli_real_escape_string($this->connection, $_POST["other_user_id"])."',
+					  	'".mysqli_real_escape_string($this->connection, 1)."',NOW())";
 			$insert_pokes = mysqli_query($this->connection, $query);
 			
 			$query_pokes = "SELECT pokes.id, pokes.other_user_id FROM pokes

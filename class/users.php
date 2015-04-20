@@ -5,7 +5,6 @@ include_once("template.php");
 
 Class Users extends Database{
 
-	protected $connection;
 	public $template;
 	public function __construct()
 	{
@@ -25,9 +24,9 @@ Class Users extends Database{
 		$error_string = "";
 		$query_user = "SELECT users.first_name, users.last_name, users.email
 					   FROM users 
-					   WHERE users.first_name = '".$_POST['first_name']."'
-					   OR users.last_name ='".$_POST['last_name']."' 
-					   AND users.email='".$_POST['email']."'";
+					   WHERE users.first_name = '".mysqli_real_escape_string($this->connection, $_POST['first_name'])."'
+					   OR users.last_name ='".mysqli_real_escape_string($this->connection, $_POST['last_name'])."' 
+					   AND users.email='".mysqli_real_escape_string($this->connection, $_POST['email'])."'";
 
 		$user_in_db = $this->fetch_record($query_user);
 
@@ -100,8 +99,8 @@ Class Users extends Database{
 		{
 
 			$query_login = "SELECT * FROM users
-							WHERE users.email='".$_POST["email"]."' 
-							AND users.password='".$_POST["password"]."'";
+							WHERE users.email='".mysqli_real_escape_string($this->connection, $_POST["email"])."' 
+							AND users.password='".mysqli_real_escape_string($this->connection, $_POST["password"])."'";
 			$query_login_result = $this->fetch_record($query_login);
 
 			if(count($query_login_result) > 0)
