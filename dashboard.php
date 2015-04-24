@@ -94,9 +94,8 @@
 
 				$.post(form.attr("action"), form.serialize(), function(data){
 					if(data.status){
-						$(".modal_view_pokes").html(data.message).fadeIn(500, function(){
-							$(this).delay(3000).fadeOut(500);
-						});
+						$("#one_time").html(data.page_num);
+						$(".modal_view_pokes").html(data.message);
 					}else{
 
 					}
@@ -228,6 +227,7 @@
 						</tr>
 						<tbody class="modal_view_pokes"></tbody>
 					</table>
+						<div id="one_time"></div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
