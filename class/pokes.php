@@ -14,6 +14,8 @@
 				$this->add_poke();
 			if(isset($_POST["action"]) && $_POST["action"] == "view_pokes_history")
 				$this->view_pokes_history();
+			if(isset($_GET["action"]) && $_GET["action"] == "paginate_result")
+				$this->paginate_result();
 		}
 
 		protected function add_poke()
@@ -103,6 +105,7 @@
 			return $this->fetch_all($query);
 		}
 
+
 		public function view_pokes_history()
 		{
 			$poke_html = "";
@@ -110,7 +113,8 @@
 					  pokes.my_user_id, pokes.other_user_id, pokes.created_at
 					  FROM pokes LEFT JOIN users ON users.id = pokes.my_user_id
 					  WHERE pokes.other_user_id ='".$_SESSION["user_info"]["user_id"].
-					  "'AND pokes.my_user_id =".$_POST["other_user_id"];
+					  "'AND pokes.my_user_id ='".$_POST["other_user_id"].
+					  "'LIMIT 7";
 			$persons_poked_me = $this->fetch_all($query);
 
 
@@ -119,13 +123,14 @@
 				$data["status"] = TRUE;
 				foreach($persons_poked_me as $person_poked_me)
 				{
-					$poke_html .="<tr>
+					$poke_html .="<tr class='row_pokes'>
 									<td>".$person_poked_me["first_name"]." ".$person_poked_me["last_name"]."</td>
 									<td>".$person_poked_me["email"]."</td>
 									<td>".date_format(date_create($person_poked_me["created_at"]),'g:ia \o\n l jS F Y')."</td>
 								  </tr>";
 				}	
 				$data["message"] = $poke_html;
+				$data["page_num"] = $this->pokes_history_pagination_number($_POST["other_user_id"]);
 			}
 			else
 			{
@@ -136,6 +141,40 @@
 			}
 
 			echo json_encode($data);
+		}
+
+		public function pokes_history_pagination_number($other_user_id)
+		{
+			$htm_page_num = "";
+			$per_page = 7;
+			$query = "SELECT COUNT(*) as total_rows
+					  FROM pokes LEFT JOIN users ON users.id = pokes.my_user_id
+					  WHERE pokes.other_user_id ='".$_SESSION["user_info"]["user_id"]."'
+					  AND pokes.my_user_id =".$other_user_id;
+			$pokes_count = $this->fetch_record($query);
+			$max_page_num = ceil($pokes_count["total_rows"] / $per_page);
+
+			if($pokes_count["total_rows"] > 7)
+			{
+				$htm_page_num .= "<nav>
+									<ul class='pagination'>";
+				foreach(range(1, $max_page_num) as $page_number)
+				{
+					$htm_page_num .= "<li>
+										<a href='pokes.php?action=paginate_history&paginate_result=".$page_number."'>".$page_number."</a>
+									  </li>";
+				}
+
+				$htm_page_num .= "	</ul>
+								</nav>";
+			}
+
+			return $htm_page_num;
+		}
+
+		public function paginate_result()
+		{
+			echo "here";
 		}
 
 	}
