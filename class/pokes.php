@@ -14,7 +14,7 @@
 				$this->add_poke();
 			if(isset($_POST["action"]) && $_POST["action"] == "view_pokes_history")
 				$this->view_pokes_history();
-			if(isset($_GET["action"]) && $_GET["action"] == "paginate_result")
+			if(isset($_POST["action"]) && $_POST["action"] == "paginate_history")
 				$this->paginate_result();
 		}
 
@@ -109,35 +109,29 @@
 		public function view_pokes_history()
 		{
 			$poke_html = "";
-			$query = "SELECT users.id, users.first_name, users.last_name, users.email,
-					  pokes.my_user_id, pokes.other_user_id, pokes.created_at
+			$query = "SELECT users.id, pokes.id, pokes.my_user_id, pokes.other_user_id, pokes.created_at
 					  FROM pokes LEFT JOIN users ON users.id = pokes.my_user_id
 					  WHERE pokes.other_user_id ='".$_SESSION["user_info"]["user_id"].
-					  "'AND pokes.my_user_id ='".$_POST["other_user_id"].
-					  "'LIMIT 7";
+					  "'AND pokes.my_user_id ='".$_POST["other_user_id"]."'";
 			$persons_poked_me = $this->fetch_all($query);
 
 
-			if(count($persons_poked_me) > 0)
+			if(count($persons_poked_me) > 5)
 			{
 				$data["status"] = TRUE;
-				foreach($persons_poked_me as $person_poked_me)
-				{
-					$poke_html .="<tr class='row_pokes'>
-									<td>".$person_poked_me["first_name"]." ".$person_poked_me["last_name"]."</td>
-									<td>".$person_poked_me["email"]."</td>
-									<td>".date_format(date_create($person_poked_me["created_at"]),'g:ia \o\n l jS F Y')."</td>
-								  </tr>";
-				}	
-				$data["message"] = $poke_html;
 				$data["page_num"] = $this->pokes_history_pagination_number($_POST["other_user_id"]);
 			}
 			else
 			{
 				$data["status"] = FALSE;
-				$data["message"] = $this->template->success_error_htm(FALSE) .
-								   "Something went wrong while fetching your pokes".
-								   $this->template->error_success_after();
+				foreach($persons_poked_me as $person_poked_me)
+				{
+					$poke_html .="<tr class='row_pokes'>
+					                <td>" .$person_poked_me["id"]. "</td>
+									<td>".date_format(date_create($person_poked_me["created_at"]),'g:ia \o\n l jS F Y')."</td>
+								  </tr>";
+				}
+				$data["message"] = $poke_html;
 			}
 
 			echo json_encode($data);
@@ -146,7 +140,7 @@
 		public function pokes_history_pagination_number($other_user_id)
 		{
 			$htm_page_num = "";
-			$per_page = 7;
+			$per_page = 5;
 			$query = "SELECT COUNT(*) as total_rows
 					  FROM pokes LEFT JOIN users ON users.id = pokes.my_user_id
 					  WHERE pokes.other_user_id ='".$_SESSION["user_info"]["user_id"]."'
@@ -154,14 +148,19 @@
 			$pokes_count = $this->fetch_record($query);
 			$max_page_num = ceil($pokes_count["total_rows"] / $per_page);
 
-			if($pokes_count["total_rows"] > 7)
+			if($pokes_count["total_rows"] > 5)
 			{
 				$htm_page_num .= "<nav>
 									<ul class='pagination'>";
 				foreach(range(1, $max_page_num) as $page_number)
 				{
 					$htm_page_num .= "<li>
-										<a href='pokes.php?action=paginate_history&paginate_result=".$page_number."'>".$page_number."</a>
+										<form class='ppp' action='class/pokes.php' method='post' style='display:inline'>
+											<input type='hidden' name='action' value='paginate_history' />
+											<input type='hidden' name='paginate_num' value='".$page_number."' />
+											<input type='hidden' name='other_user_id' value='".$other_user_id."' />
+											<input class='btn btn-primary' type='submit' value='" .$page_number. "' />
+										</form>
 									  </li>";
 				}
 
@@ -174,7 +173,28 @@
 
 		public function paginate_result()
 		{
-			echo "here";
+			$poke_html = "";
+			$per_page  = 5;
+			if(!empty($_POST["paginate_num"]))
+			{
+				$offset = ($_POST['paginate_num'] - 1) * $per_page;
+				$query 	= "SELECT users.id, pokes.id,
+					  	   pokes.my_user_id, pokes.other_user_id, pokes.created_at
+						   FROM pokes LEFT JOIN users ON users.id = pokes.my_user_id
+						   WHERE pokes.other_user_id ='".$_SESSION["user_info"]["user_id"]."'
+						   AND pokes.my_user_id =".$_POST["other_user_id"]. " LIMIT " .$offset. ",".$per_page."";
+
+				$pokes = $this->fetch_all($query);
+				foreach($pokes as $poke)
+				{
+					$poke_html .="<tr class='row_pokes'>
+									<td>".$poke["id"]."</td>
+									<td>".date_format(date_create($poke["created_at"]),'g:ia \o\n l jS F Y')."</td>
+								  </tr>";
+				}
+				$data["paginate_result"] = $poke_html;
+			}
+			echo json_encode($data);
 		}
 
 	}

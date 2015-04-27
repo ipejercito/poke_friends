@@ -23,6 +23,8 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 
+			
+
 			var number_of_people = $("span.number_of_people").length;
 			if(number_of_people > 0){
 				$(".append_panel_head").append('<h4>There are <b>'+number_of_people+'</b> people who poked you');
@@ -37,9 +39,6 @@
 				$("#no_pokes").append("<h3 class='text-center no_pokes_text'><strong>No Pokes Yet</strong></h3>")
 			}
 
-			function blinker(number){
-				$(number).fadeIn(3000);
-			}
 			
 
 			$(".poke_form").on("click",function(){
@@ -94,15 +93,33 @@
 
 				$.post(form.attr("action"), form.serialize(), function(data){
 					if(data.status){
-						$("#one_time").html(data.page_num);
-						$(".modal_view_pokes").html(data.message);
+						$("#one_time").html(data.page_num).show();
+						$(".modal_view_pokes").hide();
+
+						/*begin for paginate number not to submit*/
+						$(".ppp").on("submit", function(){
+							var form_paginate = $(this);
+
+							$.post(form_paginate.attr("action"), form_paginate.serialize(), function(data){
+								$(".modal_view_pokes").html(data.paginate_result).show();
+							},"json");
+
+							return false;
+						});
+						/*end for paginate number not to submit*/
+
 					}else{
+						$("#one_time").hide();
+						$(".modal_view_pokes").html(data.message).show();
 
 					}
 				},"json");
 
 				return false;
 			});
+
+
+			
 			
 		})
 	</script>
@@ -219,10 +236,9 @@
 						<h4 class="modal-title" id="myModalLabel">Modal title</h4>
 					</div>
 					<div class="modal-body">
-					<table class="table table-striped">
+					<table class="table table-striped table_page">
 						<tr>
-							<th>Name</th>
-							<th>Email</th>
+							<th>Poke ID</th>	
 							<th>Poke Date</th>
 						</tr>
 						<tbody class="modal_view_pokes"></tbody>
@@ -231,7 +247,6 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary">Save changes</button>
 					</div>
 				</div>
 			</div>
