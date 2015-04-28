@@ -21,10 +21,6 @@ Class Users extends Database{
 
 	public function register_user()
 	{
-		$directory = "../assets/uploads/";
-		$file_name = $_FILES['file']['name'];
-		$file_path = $directory.$file_name;
-
 		$error_string = "";
 		$query_user = "SELECT users.first_name, users.last_name, users.email
 					   FROM users 
@@ -52,10 +48,10 @@ Class Users extends Database{
 			$errors[] = "Email cant be empty";
 		if($_POST["password"] != $_POST["confirm_password"])
 			$errors[] = "Password doesnt match.";
+
 		if(empty($errors))
 		{
-			move_uploaded_file($_FILES['file']['tmp_name'],$file_path) ;
-			$insert_user = "INSERT INTO users(first_name, last_name, photo, email, password, created_at)
+			$insert_user = "INSERT INTO users(first_name, last_name, email, password, created_at)
 					        VALUES('".mysqli_real_escape_string($this->connection,$_POST["first_name"])."',
 					         '".mysqli_real_escape_string($this->connection,$_POST["last_name"])."',
 					  		 '".mysqli_real_escape_string($this->connection,$_POST["email"])."',

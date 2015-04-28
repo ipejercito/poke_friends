@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="assets/style/style.css">
 	<link rel="stylesheet" href="assets/style/bootstrap.css">
 	<script type="text/javascript" src="assets/js/jquery.js"></script>
+	<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
 
@@ -16,12 +17,12 @@
 				$("a.logout").remove();
 			}
 
-			$("#form_register").on("submit",function(){
+			$(".form_register").on("submit",function(){
 				var form = $(this);
 
 				$.post(form.attr("action"), form.serialize(), function(data){
 					if(data.status){
-						$(".message").html(data.message).fadeIn(500, function(){
+						$(".message_generic").html(data.message).fadeIn(500, function(){
 							$(this).delay(3000).fadeOut(500);
 						});
 					}else{
@@ -34,19 +35,20 @@
 				return false;
 			});
 
+
 			$("#form_login").on("submit", function(){
 				var form = $(this);
 
 				$.post(form.attr("action"), form.serialize(), function(data){
 					if(data.status){
-						$(".message").html(data.message).fadeIn(500, function(){
+						$(".message_generic").html(data.message).fadeIn(500, function(){
 							$(this).delay(3000).fadeOut(500);
 						});
 						setTimeout(function(){
 							window.location = data.url_redirect;
 						},3000);
 					}else{
-						$(".message").html(data.message).fadeIn(500, function(){
+						$(".message_generic").html(data.message).fadeIn(500, function(){
 							$(this).delay(3000).fadeOut(500);
 						});;
 					}
@@ -54,84 +56,102 @@
 
 				return false;
 			});
+
+			/*$('.dropdown.keep-open').on({
+			    "shown.bs.dropdown": function() { this.closable = false; },
+			    "click":             function() { this.closable = true; },
+			    "hide.bs.dropdown":  function() { return this.closable; }
+			});*/
+ $('.dropdown-menu').click(function(e) {
+        e.stopPropagation();
+    });
+
 			
+			$(".bbb").on("click", function(){
+				if($(this).parent("#login_dropdown").hasClass("open"))
+					$("#register_dropdown").removeClass("open");
+
+				if($(this).parent("#register_dropdown").hasClass("open"))
+					$("#login_dropdown").removeClass("open");
+			});
+			
+
 		})
 	</script>
 </head>
 <body>
 	<div class="container">
-		<?= include("./assets/includes/header.php") ?>
+		<div id="top_nav" class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container">
+				<a data-toggle="modal" data-target="#login_modal" class="brand text-center">
+					<h3 class="pull-left "style="">Poke Friends</h3>
+				</a>
+
+				<a href="class/users.php?url=logout" class="brand logout">   
+				    <h3 class="pull-right">Logout</h3>
+				</a>
+
+				<div class="btn-group dropdown keep-open pull-right" id="login_dropdown">
+					<button type="button" class="btn btn-primary">Login</button>
+					<button type="button" class="btn btn-primary dropdown-toggle bbb" data-toggle="dropdown">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu" >
+						<form id="form_login" action="class/users.php" method="post">
+							<input type="hidden" name="action" value="login">
+							<li>
+								<input type="email" name="email" class="form-control" id="email" placeholder="Email">
+							</li>
+							<li>
+								<input type="password" name="password" class="form-control" id="password" placeholder="password">
+							</li>
+							<li>
+								<input type="submit" class="btn btn-default" value="submit"/>
+							</li>
+						</form>
+					</ul>
+				</div>
+
+				<div class="btn-group dropdown keep-open pull-right" id="register_dropdown" style="margin-right: 15px;">
+					<button type="button" class="btn btn-primary">Register</button>
+					<button type="button" class="btn btn-primary dropdown-toggle bbb" data-toggle="dropdown">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu" >
+						<form class="form_register" action="class/users.php" method="post">
+							<input type="hidden" name="action" value="register">
+							<li>
+								<input type="text" class="form-control" name="first_name" placeholder="First Name" />
+							</li>
+							<li>
+								<input type="text" class="form-control" name="last_name" placeholder="Last Name">
+							</li>
+							<li>
+								<input type="email" class="form-control" name="email" placeholder="Email">
+							</li>
+							<li>
+								<input type="password" class="form-control" name="password" placeholder="password">
+							</li>
+							<li>
+								<input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password">
+							</li>
+							<li>
+								<input type="submit" class="btn btn-default" value="submit"/>
+							</li>
+						</form>
+					</ul>
+				</div>
+
+				<div class="clearfix"></div>
+			</div>
+		</div>
+
+		<div class="spacer"></div>
 		<div class="row">
-			<div class="col-md-6">
-				<form class="form-horizontal" id="form_register" action="class/users.php" method="post"> 
-					<input type="hidden" name="action" value="register">
-					<h2 class="text-left">Register</h2>
-					<div class="form-group">
-						<label for="first_name" class="col-sm-3 control-label">First Name</label>
-						<div class="col-sm-6">
-							<input type="text" class="form-control" name="first_name" id="first_name" placeholder="First Name">
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="last_name" class="col-sm-3 control-label">Last Name</label>
-						<div class="col-sm-6">
-							<input type="text" class="form-control" name="last_name" id="last_name" placeholder="Last Name">
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="email" class="col-sm-3 control-label">Email</label>
-						<div class="col-sm-6">
-							<input type="email" class="form-control" name="email" id="email" placeholder="Email">
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="password" class="col-sm-3 control-label">Password</label>
-						<div class="col-sm-6">
-							<input type="password" class="form-control" name="password" id="password" placeholder="password">
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="confirm_password" class="col-sm-3 control-label">Confirm Password</label>
-						<div class="col-sm-6">
-							<input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Confirm Password">
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-offset-2 col-sm-10">
-							<button type="submit" class="btn btn-default">Sign in</button>
-						</div>
-					</div>
-				</form>
-			</div>
-
-			<div class="col-md-6">
-				<form class="form-horizontal" id="form_login" action="class/users.php" method="post">
-					<input type="hidden" name="action" value="login">
-					<h2 class="text-left">Login</h2>
-					<div class="form-group">
-						<label for="email" class="col-sm-2 control-label">Email</label>
-						<div class="col-sm-6">
-							<input type="email" name="email" class="form-control" id="email" placeholder="Email">
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="password" class="col-sm-2 control-label">Password</label>
-						<div class="col-sm-6">
-							<input type="password" name="password" class="form-control" id="password" placeholder="password">
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-offset-2 col-sm-10">
-							<button type="submit" class="btn btn-default">Sign in</button>
-						</div>
-					</div>
-				</form>
-			</div>
-
 			<div class="col-md-12">
 				<div class="message text-center"></div>
+				<div class="message_generic text-center"></div>
 			</div>
-
 		</div>
 	</div>
 </body>

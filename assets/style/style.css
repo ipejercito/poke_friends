@@ -9,12 +9,8 @@
 	color:#7EC0EE;
 }
 
-#form_register{
-	margin-top: 73px;
-}
-
-#form_login{
-	margin-top: 73px;
+.register{
+	margin-right: 20px;
 }
 
 .users_list{
@@ -31,4 +27,38 @@
 
 .append_panel_head{
 	text-align:center;
+}
+
+.button{
+	background:none!important;
+     border:none; 
+     padding:0!important;
+     font: inherit;
+     /*border is optional*/
+     border-bottom:1px solid #444; 
+     cursor: pointer;
+}
+
+ul.dropdown-menu{
+	width: 250px;
+}
+
+ul.dropdown-menu li{
+	padding: 5px 10px 5px 10px;
+}
+
+.dropdown{
+	margin-top: 11px;
+}
+
+.spacer{
+	margin-top: 73px;
+}
+
+.message{
+	margin-top: 73px;
+}
+
+.message_generic{
+	margin-top: 200px;
 }
