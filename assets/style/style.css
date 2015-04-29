@@ -55,10 +55,14 @@ ul.dropdown-menu li{
 	margin-top: 73px;
 }
 
-.message{
-	margin-top: 73px;
+.messages{
+	position:fixed;
+	left:90px;
+	top:200px;
 }
 
 .message_generic{
-	margin-top: 200px;
+	margin-left: 50px;
+	margin-top: 50px;
+	width:1000px;
 }

@@ -77,7 +77,7 @@
 							$(".your_pokes").append(data.recent_user_poke);
 						}
 
-						$(".message").hide().html("<div class='alert alert-success col-md-6 col-md-6 col-md-offset-3 text-center'><strong>You've just poke "+name+"</strong></div>").fadeIn(1000, function(){
+						$(".message_generic").hide().html("<div class='alert alert-success col-md-6 col-md-6 col-md-offset-3 text-center'><strong>You've just poke "+name+"</strong></div>").fadeIn(1000, function(){
 							$(this).delay(4000).fadeOut(1000);
 						});
 						
@@ -189,7 +189,11 @@
 		<?php   }	?>
 				</tbody>
 			</table>
-			<div class="message"></div>
+		<div class="messages">
+			<div class="col-md-12">
+				<div class="message_generic"></div>
+			</div>
+		</div>
 		</div>
 		
 		

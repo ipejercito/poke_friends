@@ -57,22 +57,24 @@
 				return false;
 			});
 
-			/*$('.dropdown.keep-open').on({
-			    "shown.bs.dropdown": function() { this.closable = false; },
-			    "click":             function() { this.closable = true; },
-			    "hide.bs.dropdown":  function() { return this.closable; }
-			});*/
- $('.dropdown-menu').click(function(e) {
-        e.stopPropagation();
-    });
+			 $('.dropdown-menu').click(function(e) {
+			        e.stopPropagation();
+			 });
 
 			
-			$(".bbb").on("click", function(){
+			/*$(".dropdown_btn").on("click", function(){
 				if($(this).parent("#login_dropdown").hasClass("open"))
 					$("#register_dropdown").removeClass("open");
-
+					
 				if($(this).parent("#register_dropdown").hasClass("open"))
 					$("#login_dropdown").removeClass("open");
+			});*/
+
+			$('.dropdown').on('show.bs.dropdown', function(e){
+				$(this).find('.dropdown-menu').first().stop(true, true).slideDown();
+			});
+			$('.dropdown').on('hide.bs.dropdown', function(e){
+				$(this).find('.dropdown-menu').first().stop(true, true).slideUp();
 			});
 			
 
@@ -80,7 +82,7 @@
 	</script>
 </head>
 <body>
-	<div class="container">
+	<div class="container-fluid">
 		<div id="top_nav" class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container">
 				<a data-toggle="modal" data-target="#login_modal" class="brand text-center">
@@ -93,7 +95,7 @@
 
 				<div class="btn-group dropdown keep-open pull-right" id="login_dropdown">
 					<button type="button" class="btn btn-primary">Login</button>
-					<button type="button" class="btn btn-primary dropdown-toggle bbb" data-toggle="dropdown">
+					<button type="button" class="btn btn-primary dropdown-toggle dropdown_btn" data-toggle="dropdown">
 						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu" >
@@ -114,7 +116,7 @@
 
 				<div class="btn-group dropdown keep-open pull-right" id="register_dropdown" style="margin-right: 15px;">
 					<button type="button" class="btn btn-primary">Register</button>
-					<button type="button" class="btn btn-primary dropdown-toggle bbb" data-toggle="dropdown">
+					<button type="button" class="btn btn-primary dropdown-toggle dropdown_btn" data-toggle="dropdown">
 						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu" >
@@ -133,7 +135,8 @@
 								<input type="password" class="form-control" name="password" placeholder="password">
 							</li>
 							<li>
-								<input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password">
+
+			<input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password">
 							</li>
 							<li>
 								<input type="submit" class="btn btn-default" value="submit"/>
@@ -145,9 +148,10 @@
 				<div class="clearfix"></div>
 			</div>
 		</div>
-
 		<div class="spacer"></div>
-		<div class="row">
+
+
+		<div class="messages">
 			<div class="col-md-12">
 				<div class="message text-center"></div>
 				<div class="message_generic text-center"></div>
