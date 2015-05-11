@@ -17,6 +17,10 @@ Class Users extends Database{
 			$this->login_user();
 		if(isset($_GET["url"]) && $_GET["url"] == "logout")
 			$this->logout();
+		if(isset($_POST["action"]) && $_POST["action"] == "search_user")
+			$this->search_user();
+		if(isset($_POST["action"]) && $_POST["action"] == "update_user")
+			$this->update_user();
 	}
 
 	public function register_user()
@@ -149,6 +153,94 @@ Class Users extends Database{
 		$query = "SELECT * FROM users 
 				  WHERE id !=".$user_id;
 		return $this->fetch_all($query);
+	}
+
+	public function search_user()
+	{
+		$string_htm = "";
+		$query = "SELECT * FROM users WHERE first_name LIKE '%{$_POST["search"]}%'
+		 		  OR last_name LIKE '%{$_POST["search"]}%' OR email LIKE '%{$_POST["search"]}%'";
+		$users = $this->fetch_all($query);
+
+		if(empty($_POST["search"]))
+		{
+			$data["status"] = FALSE;
+			$data["message"] = $this->template->success_error_htm(FALSE) ."You haven't type anything on search".
+							   $this->template->error_success_after();
+		}
+		else
+		{
+			if(count($users) > 0)
+			{
+				$data["status"] = TRUE;
+				$string_htm .= "<div class='panel panel-info panel_search'>
+									<div class='panel-heading'>Your search returns ".count($users)." users</div>
+									<div class='panel-body'>
+										<table class='table'>
+											<tr>
+												<th>Name</th>
+												<th>Email</th>
+												<th>Joined Date</th>
+											</tr>
+											<tbody>";
+							foreach($users as $user)
+							{
+								$string_htm .= "<tr>
+													<td>".$user["first_name"]." ".$user["last_name"]."</td>
+													<td>".$user["email"]."</td>
+													<td>".$user["created_at"]."</td>
+											   </tr>";
+							}
+							$string_htm .= 	"</tbody>
+										</table>
+									</div>
+								</div>";
+				$data["message"] = $string_htm;
+			}
+			else
+			{
+				$data["status"] = FALSE;
+				$data["message"] = $this->template->success_error_htm(FALSE) ."No results".
+								   $this->template->error_success_after();
+			}
+		}
+
+		echo json_encode($data);
+	}
+
+	protected function update_user()
+	{
+		$error_string = "";
+		if(empty($_POST['first_name']))
+			$errors[] = "Please enter your first name";
+		else if(is_numeric($_POST['first_name']))
+			$errors[] = "First name cannot contain numbers";
+		if(empty($_POST['last_name']))
+			$errors[] = "Please enter your last name";
+		else if(is_numeric($_POST['last_name']))
+			$errors[] = "Last name cannot contain numbers";
+		if(empty($_POST["password"]))
+			$errors[] = "Password cant be empty";
+		if(empty($_POST["email"]))
+			$errors[] = "Email cant be empty";
+
+		if(empty($errors))
+		{
+			$directory = "uploads/";
+			$file_name = $_FILES['image']['name'];
+			$file_path = $directory.$file_name;
+			$query = "UPDATE users SET first_name='".mysqli_real_escape_string($this->connection,$_POST["first_name"])."', 
+					  last_name='".mysqli_real_escape_string($this->connection,$_POST["last_name"])."',
+					  email='".mysqli_real_escape_string($this->connection,$_POST["email"])."',
+					  password='".mysqli_real_escape_string($this->connection,$_POST["password"])."', 
+					  photo='".$file_path."', updated_at=NOW() 
+					  WHERE id=".$_SESSION["user_info"]["user_id"];
+			$update_result = mysqli_query($this->connection, $query);	
+			if(count($update_result) > 0)
+			{
+				echo "success";
+			}
+		}
 	}
 
 	protected function is_logged_in($logged_in)

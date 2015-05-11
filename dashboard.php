@@ -16,10 +16,11 @@
 	<title>Document</title>
 	<link rel="stylesheet" href="assets/style/style.css">
 	<link rel="stylesheet" href="assets/style/bootstrap.css">
-	<link rel="stylesheet" href="assets/style/jquery_ui_smoothness.css">
+	<link rel="stylesheet" href="assets/style/smoothness/jquery-ui.css">
 	<script type="text/javascript" src="assets/js/jquery.js"></script>
 	<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="assets/js/jquery_ui.js"></script>
+	<script type="text/javascript" src="assets/js/ajax_form.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
 
@@ -118,18 +119,52 @@
 				return false;
 			});
 
+			$(".accordion").accordion({ header: "h3", collapsible: true, active: false });
 
-			
-			
+			/*image uploads*/
+			function readURL(input) {
+		        if (input.files && input.files[0]) {
+		            var reader = new FileReader();
+		            
+		            reader.onload = function (e) {
+		                $('#your_image').attr('src', e.target.result);
+		            }
+		            reader.readAsDataURL(input.files[0]);
+		        }
+	    	}
+
+			$("#image").on("change",function(){
+		        readURL(this);
+		    });
+
+		    $(".button_update").on("click", function(){
+
+		    	return false;
+		    });
+
+		    if ($(".your_image", this).attr('src') != "") {
+    			$(".your_image").hide();
+			}
+	
 		})
 	</script>
 </head>
 <body>
 	<div class="container">
 		<div class="row">
-			<?= include("./assets/includes/header.php") ?>
+			<div id="top_nav" class="navbar navbar-inverse navbar-fixed-top">
+				<div class="container">
+					<a data-toggle="modal" data-target="#login_modal" class="brand text-center">
+						<h3 class="pull-left "style="">Poke Friends</h3>
+					</a>
+					<a href="class/users.php?url=logout" class="brand logout">   
+						<h3 class="pull-right">Logout</h3>
+					</a>
+					<div class="clearfix"></div>
+				</div>
+			</div>
 			<h2 class="h2_dashboard">Welcome <?= $_SESSION['user_info']['first_name'] ?> <?= $_SESSION['user_info']['last_name'] ?></h2>
-			<div class="panel panel-default panel_pokes_list">
+			<div class="panel panel-default panel_pokes_list pull-left">
 				<div class="panel-heading append_panel_head"></div>
 				<table class="table">
 				<tr>
@@ -158,6 +193,48 @@
 		<?php 	}	?>
 				</tbody>	
 				</table>
+			</div>
+
+			<div class="pull-right righ_panel">
+				<div class="accordion">
+					<h3>Edit Profile</h3>
+					<div>
+						<form action="class/users.php" method="post" enctype="multipart/form-data" class="pull-left form-horizontal user_update">
+							<input type="hidden" name="action" value="update_user"> 
+							<div class="form-group">
+								<div class="col-sm-8">
+									<input type="text" name="first_name" class="form-control" placeholder="First Name">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-8">
+									<input type="text" name="last_name" class="form-control" placeholder="Last Name">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-8">
+									<input type="email" name="email" class="form-control" placeholder="Email">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-8">
+									<input type="password" name="password" class="form-control" placeholder="Password">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-8">
+									<input type="file" name="image" id="image"  class="form-control" size="20">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-2 col-sm-4">
+									<button type="submit" class="button_update btn btn-default">Submit</button>
+								</div>
+							</div>
+						</form>
+					<img class="pull-left" id="your_image" src="" alt="" />
+					</div>
+				</div>
 			</div>
 
 			<div class="clearfix"></div>

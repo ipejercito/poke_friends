@@ -22,12 +22,15 @@
 
 				$.post(form.attr("action"), form.serialize(), function(data){
 					if(data.status){
+						$(".message_search").hide();
+						$(".message").hide();
 						$(".message_generic").html(data.message).fadeIn(500, function(){
-							$(this).delay(3000).fadeOut(500);
+							$(this).delay(2000).fadeOut(500);
 						});
 					}else{
+						$(".message_search").hide();
 						$(".message").html(data.message).fadeIn(500, function(){
-							$(this).delay(3000).fadeOut(500);
+							$(this).delay(2000).fadeOut(500);
 						});
 					}
 				},'json');
@@ -41,16 +44,18 @@
 
 				$.post(form.attr("action"), form.serialize(), function(data){
 					if(data.status){
+						$(".message_search").hide();
 						$(".message_generic").html(data.message).fadeIn(500, function(){
-							$(this).delay(3000).fadeOut(500);
+							$(this).delay(2000).fadeOut(500);
 						});
 						setTimeout(function(){
 							window.location = data.url_redirect;
-						},3000);
+						},2000);
 					}else{
-						$(".message_generic").html(data.message).fadeIn(500, function(){
-							$(this).delay(3000).fadeOut(500);
-						});;
+						$(".message_search").hide();
+						$(".message").html(data.message).fadeIn(500, function(){
+							$(this).delay(2000).fadeOut(500);
+						});
 					}
 				},"json");
 
@@ -76,6 +81,29 @@
 			$('.dropdown').on('hide.bs.dropdown', function(e){
 				$(this).find('.dropdown-menu').first().stop(true, true).slideUp();
 			});
+
+			$(".search").on("change",function(){
+				$(".search").submit();
+			});
+
+			$(".search").on("submit", function(){
+				var form = $(this);
+				$.post(form.attr("action"), form.serialize(), function(data){
+					if(data.status){
+						$(".message_search").show();
+						$(".message").hide();
+						$(".message_search").html(data.message);
+					}else{
+						$(".message_search").hide();
+						$(".message").html(data.message).fadeIn(500, function(){
+							$(this).delay(2000).fadeOut(500);
+						});
+					}
+				},"json");
+
+				return false;
+			});
+			
 			
 
 		})
@@ -86,8 +114,15 @@
 		<div id="top_nav" class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container">
 				<a data-toggle="modal" data-target="#login_modal" class="brand text-center">
-					<h3 class="pull-left "style="">Poke Friends</h3>
+					<h3 class="pull-left "style="">XD Poke Friends</h3>
 				</a>
+
+				<form action="class/users.php" method="post"  class="form-inline pull-left dropdown search">
+					<input type="hidden" name="action" value="search_user">
+					<div class="form-group">
+    					<input type="text" name="search" class="form-control" id="form_search"  placeholder="Search i.e name/email">
+  					</div>
+				</form>
 
 				<a href="class/users.php?url=logout" class="brand logout">   
 				    <h3 class="pull-right">Logout</h3>
@@ -135,8 +170,7 @@
 								<input type="password" class="form-control" name="password" placeholder="password">
 							</li>
 							<li>
-
-			<input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password">
+								<input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password">
 							</li>
 							<li>
 								<input type="submit" class="btn btn-default" value="submit"/>
@@ -153,6 +187,7 @@
 
 		<div class="messages">
 			<div class="col-md-12">
+				<div class="message_search"></div>
 				<div class="message text-center"></div>
 				<div class="message_generic text-center"></div>
 			</div>
