@@ -84,8 +84,6 @@ Class Users extends Database{
 				$error_string .= $this->template->success_error_htm(FALSE) ."". $error."". $this->template->error_success_after();
 			}
 			$data["message"] = $error_string;
-								   
-
 		}
 		
 
@@ -178,6 +176,7 @@ Class Users extends Database{
 									<div class='panel-body'>
 										<table class='table'>
 											<tr>
+												<th>Photo</th>
 												<th>Name</th>
 												<th>Email</th>
 												<th>Joined Date</th>
@@ -186,6 +185,7 @@ Class Users extends Database{
 							foreach($users as $user)
 							{
 								$string_htm .= "<tr>
+													<td><img class='photo' src='".$user["photo"]."' /></td>
 													<td>".$user["first_name"]." ".$user["last_name"]."</td>
 													<td>".$user["email"]."</td>
 													<td>".$user["created_at"]."</td>
@@ -194,7 +194,7 @@ Class Users extends Database{
 							$string_htm .= 	"</tbody>
 										</table>
 									</div>
-								</div>";
+								</div><div style='clearfix'></div>";
 				$data["message"] = $string_htm;
 			}
 			else
@@ -211,6 +211,9 @@ Class Users extends Database{
 	protected function update_user()
 	{
 		$error_string = "";
+		$img_max_size = 100000;
+		$acceptable_type = array("image/jpeg","image/jpg","image/png","image/gif");
+
 		if(empty($_POST['first_name']))
 			$errors[] = "Please enter your first name";
 		else if(is_numeric($_POST['first_name']))
@@ -224,23 +227,56 @@ Class Users extends Database{
 		if(empty($_POST["email"]))
 			$errors[] = "Email cant be empty";
 
+		if(empty($_FILES) || !isset($_FILES['photo']))
+			$errors[] = "Image cant be empty";
+		else if($_FILES['photo']['size'] > $img_max_size)
+			$errors[] = "Image should not exceed 1mb";
+		else if(!in_array($_FILES['photo']['type'],$acceptable_type))
+			$errors[] = "Invalid file type";
+
 		if(empty($errors))
 		{
-			$directory = "uploads/";
-			$file_name = $_FILES['image']['name'];
+			$directory = "../assets/uploads/";
+			$db_directory = "assets/uploads/";
+			$file_name = $_FILES['photo']['name'];
 			$file_path = $directory.$file_name;
-			$query = "UPDATE users SET first_name='".mysqli_real_escape_string($this->connection,$_POST["first_name"])."', 
-					  last_name='".mysqli_real_escape_string($this->connection,$_POST["last_name"])."',
-					  email='".mysqli_real_escape_string($this->connection,$_POST["email"])."',
-					  password='".mysqli_real_escape_string($this->connection,$_POST["password"])."', 
-					  photo='".$file_path."', updated_at=NOW() 
-					  WHERE id=".$_SESSION["user_info"]["user_id"];
-			$update_result = mysqli_query($this->connection, $query);	
-			if(count($update_result) > 0)
+			$db_file_path = $db_directory.$file_name;
+			
+			if(move_uploaded_file($_FILES['photo']['tmp_name'], $file_path))
 			{
-				echo "success";
+
+				$query = "UPDATE users SET first_name='".mysqli_real_escape_string($this->connection,$_POST["first_name"])."', 
+						  last_name='".mysqli_real_escape_string($this->connection,$_POST["last_name"])."',
+						  email='".mysqli_real_escape_string($this->connection,$_POST["email"])."',
+						  password='".mysqli_real_escape_string($this->connection,$_POST["password"])."', 
+						  photo='".$db_file_path."', updated_at = NOW() 
+						  WHERE id=".$_SESSION["user_info"]["user_id"];
+				$update_result = mysqli_query($this->connection, $query);
+
+				if(count($update_result) > 0)
+					$data["message"] = $this->template->success_error_htm(TRUE) ."Your profile is successfully updated"
+									   . $this->template->error_success_after();
+				else
+					$data["message"] = $this->template->success_error_htm(FALSE) ."Sql error profile not updated"
+									   . $this->template->error_success_after();
 			}
+			else
+				$data["message"] = $this->template->success_error_htm(FALSE) ."Error uploading the image"
+									   . $this->template->error_success_after();
+
 		}
+		else
+		{
+			foreach($errors as $error)
+			{
+				$error_string .= $this->template->success_error_htm(FALSE) .$error. 
+								$this->template->error_success_after();
+			}
+			$data["message"] = $error_string;
+		}
+		
+		echo json_encode($data["message"]);
+
 	}
 
 	protected function is_logged_in($logged_in)
@@ -256,7 +292,6 @@ Class Users extends Database{
 		session_destroy();
 		header("location:../index.php");
 	}
-
 
 }
 

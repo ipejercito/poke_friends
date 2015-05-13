@@ -67,6 +67,12 @@ ul.dropdown-menu li{
 	width:1000px;
 }
 
+.message_generic_2{
+	margin-left: 50px;
+	margin-top: -80px;
+	width:1000px;
+}
+
 .righ_panel{
 	padding-left: 10px;
 	width: 720px;
@@ -76,4 +82,26 @@ ul.dropdown-menu li{
 #form_search{
 	width: 250px;
 	margin-left: 200px;
+}
+
+.your_image{
+	position: absolute;
+	right: 59px;
+	padding: 3px;
+	border: 1px solid grey;
+	margin-bottom: 15px;
+	width:300px;
+}
+
+.accordion_profile{
+	position: relative;
+	height: 327px!important;
+}
+
+img.your_image[src=""] {
+   display: none;
+}
+
+img.photo{
+	width:50px;
 }

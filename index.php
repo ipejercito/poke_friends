@@ -114,7 +114,7 @@
 		<div id="top_nav" class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container">
 				<a data-toggle="modal" data-target="#login_modal" class="brand text-center">
-					<h3 class="pull-left "style="">XD Poke Friends</h3>
+					<h3 class="pull-left "style="">Poke Friends XD</h3>
 				</a>
 
 				<form action="class/users.php" method="post"  class="form-inline pull-left dropdown search">

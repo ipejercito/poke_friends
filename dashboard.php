@@ -24,8 +24,6 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 
-			
-
 			var number_of_people = $("span.number_of_people").length;
 			if(number_of_people > 0){
 				$(".append_panel_head").append('<h4>There are <b>'+number_of_people+'</b> people who poked you');
@@ -127,7 +125,7 @@
 		            var reader = new FileReader();
 		            
 		            reader.onload = function (e) {
-		                $('#your_image').attr('src', e.target.result);
+		                $('.your_image').attr('src', e.target.result);
 		            }
 		            reader.readAsDataURL(input.files[0]);
 		        }
@@ -137,15 +135,33 @@
 		        readURL(this);
 		    });
 
-		    $(".button_update").on("click", function(){
 
-		    	return false;
-		    });
-
-		    if ($(".your_image", this).attr('src') != "") {
-    			$(".your_image").hide();
+		    if($(".your_image").attr('src') != ""){
+				$(this).show();
 			}
-	
+
+			$(".ui-accordion-content").addClass("accordion_profile");
+
+			$(".user_update").on("submit", function(){
+			    var form = $(this);
+				$(".user_update").ajaxSubmit({
+					type:"POST", 
+					dataType: "json",
+					url: form.attr("action"),
+					data:form.serialize(),
+					success:function(data){
+					console.log(JSON.stringify(data));
+					var str = JSON.stringify(data);
+					str1 = str.replace(/"/g, '');
+					$(".message_generic_2").hide().html(str1).fadeIn(1000, function(){
+								$(this).delay(4000).fadeOut(1000)});
+					}
+				});
+
+				return false;
+			});
+
+			
 		})
 	</script>
 </head>
@@ -155,7 +171,7 @@
 			<div id="top_nav" class="navbar navbar-inverse navbar-fixed-top">
 				<div class="container">
 					<a data-toggle="modal" data-target="#login_modal" class="brand text-center">
-						<h3 class="pull-left "style="">Poke Friends</h3>
+						<h3 class="pull-left "style="">Poke Friends XD</h3>
 					</a>
 					<a href="class/users.php?url=logout" class="brand logout">   
 						<h3 class="pull-right">Logout</h3>
@@ -196,7 +212,7 @@
 			</div>
 
 			<div class="pull-right righ_panel">
-				<div class="accordion">
+				<div class="accordion accordion_profile">
 					<h3>Edit Profile</h3>
 					<div>
 						<form action="class/users.php" method="post" enctype="multipart/form-data" class="pull-left form-horizontal user_update">
@@ -223,7 +239,7 @@
 							</div>
 							<div class="form-group">
 								<div class="col-sm-8">
-									<input type="file" name="image" id="image"  class="form-control" size="20">
+									<input type="file" name="photo" id="image"  class="form-control" size="20">
 								</div>
 							</div>
 							<div class="form-group">
@@ -232,7 +248,7 @@
 								</div>
 							</div>
 						</form>
-					<img class="pull-left" id="your_image" src="" alt="" />
+					<img class="pull-left your_image" src=""/>
 					</div>
 				</div>
 			</div>
@@ -269,6 +285,7 @@
 		<div class="messages">
 			<div class="col-md-12">
 				<div class="message_generic"></div>
+				<div class="message_generic_2"></div>
 			</div>
 		</div>
 		</div>
