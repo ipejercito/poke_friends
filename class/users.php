@@ -184,11 +184,13 @@ Class Users extends Database{
 											<tbody>";
 							foreach($users as $user)
 							{
+								$date = new DateTime($user["created_at"]);
+								$photo = (!empty($user["photo"])) ? $user["photo"] : "assets/uploads/no_image.png";
 								$string_htm .= "<tr>
-													<td><img class='photo' src='".$user["photo"]."' /></td>
+													<td><img class='photo' src='".$photo."' /></td>
 													<td>".$user["first_name"]." ".$user["last_name"]."</td>
 													<td>".$user["email"]."</td>
-													<td>".$user["created_at"]."</td>
+													<td>".$date->format('F d Y - h:i:s A')."</td>
 											   </tr>";
 							}
 							$string_htm .= 	"</tbody>

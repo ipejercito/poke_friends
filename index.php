@@ -103,8 +103,6 @@
 
 				return false;
 			});
-			
-			
 
 		})
 	</script>

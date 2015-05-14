@@ -44,7 +44,7 @@
 
 				var form = $(this);
 				var id_array = [];
-				var name = form.parents("td").parents("tr").children().closest("td:first-child").text();
+				var name = form.parents("td").parents("tr").children().closest("td:nth-child(2)").text();
 
 				$.post(form.attr("action"), form.serialize(), function(data){
 					if(data.status){
@@ -184,6 +184,7 @@
 				<div class="panel-heading append_panel_head"></div>
 				<table class="table">
 				<tr>
+						<th>Photo</th>
 						<th>Person who poke you</th>
 						<th>Pokes History</th>
 				</tr>
@@ -195,8 +196,10 @@
 					</h5>
 					
 					<tr>
+						<td><img class="photo" src="<?= (!empty($other_pokes['photo'])) ? $other_pokes['photo'] : 'assets/uploads/no_image.png' ?>" /></td>
 						<td><?= $other_pokes["first_name"] ?> <?= $other_pokes["last_name"] ?> 
-						poked you <strong><?= $other_pokes["number_of_pokes"] ?> times</strong></td>
+						poked you <strong><?= $other_pokes["number_of_pokes"] ?> times</strong>
+						</td>
 						<td>
 							<form action="class/pokes.php" method="post" class="form_who_poke">
 								<input type="hidden" name="action" value="view_pokes_history">
@@ -257,6 +260,7 @@
 			<h3>List of persons you can poke</h3>
 			<table class="table table-striped users_list">
 				<tr>
+					<th>Photo</th>
 					<th>Name</th>
 					<th>Email</th>
 					<th>Joined Date</th>
@@ -265,11 +269,12 @@
 				<tbody>
 			<?php
 				foreach($users->get_other_users($_SESSION['user_info']['user_id']) as $user)
-				{	?>
+				{	$date = new DateTime($user["created_at"]); ?>
 					<tr>
+						<td><img class="photo" src="<?= (!empty($user['photo'])) ? $user['photo'] : 'assets/uploads/no_image.png' ?>" /></td>
 						<td><?= $user["first_name"] ?>  <?= $user["last_name"] ?></td>
 						<td><?= $user["email"] ?></td>
-						<td><?= $user["created_at"] ?></td>
+						<td><?= $date->format('F d Y - h:i:s A') ?></td>
 						<td>
 							<form class="poke_form" action="class/pokes.php" method="post">
 								<input type="hidden" name="action" value="add_poke">
@@ -298,16 +303,17 @@
 			<h3>List of persons you poked</h3>
 			<table class="table table-striped users_list" id="you_poked">
 				<tr>
+					<th>Photo</th>
 					<th>Name</th>
 					<th>Email</th>
 					<th>Number of Pokes</th>
-
 				</tr>
 				<tbody class="your_pokes">	
 			<?php
 					foreach($pokes->get_poked_users($_SESSION['user_info']['user_id']) as $user_pokes)
 					{	?>
 					<tr id="<?= $user_pokes["other_user_id"] ?>">
+						<td><img class="photo" src="<?= (!empty($user_pokes['photo'])) ? $user_pokes['photo'] : 'assets/uploads/no_image.png' ?>" /></td>
 						<td><?= $user_pokes["first_name"] ?> <?= $user_pokes["last_name"] ?></td>
 						<td><?= $user_pokes["email"] ?></td>
 						<td id="blink_pokes_<?= $user_pokes["other_user_id"] ?>" ><?= $user_pokes["number_of_pokes"] ?></td>

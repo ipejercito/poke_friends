@@ -30,7 +30,7 @@
 							WHERE pokes.id=".mysqli_insert_id($this->connection);
 			$you_poked_info = $this->fetch_record($query_pokes);
 
-			$query_get_recent_poke = "SELECT users.id, users.first_name, users.last_name, users.email,
+			$query_get_recent_poke = "SELECT users.id, users.photo, users.first_name, users.last_name, users.email,
 									  pokes.other_user_id, pokes.my_user_id, COUNT(pokes.other_user_id) as number_of_pokes
 									  FROM users LEFT JOIN pokes 
 									  ON pokes.other_user_id = users.id
@@ -44,8 +44,9 @@
 								 WHERE pokes.my_user_id=".$_SESSION['user_info']['user_id'];
 			$result_count_poke = $this->fetch_record($query_count_poke);
 			$one_poke = ($result_count_poke["instance_of_pokes"] == 1) ? TRUE : FALSE;
-			
+			$photo = (!empty($result_get_recent_poke[0]["photo"])) ? $result_get_recent_poke[0]["photo"] : "assets/uploads/no_image.png";
 			$format_recent_poke = "<tr id=".$result_get_recent_poke[0]["other_user_id"].">".
+									"<td><img class='photo' src='".$photo."' /></td>".
 									"<td>".$result_get_recent_poke[0]["first_name"]." ".$result_get_recent_poke[0]["last_name"]."</td>".
 									"<td>".$result_get_recent_poke[0]["email"]."</td>".
 									"<td>".$result_get_recent_poke[0]["number_of_pokes"]."</td>".
@@ -54,6 +55,7 @@
 			$poke_first_instance = "<h3>List of persons you poked</h3>
 									<table class='table table-striped users_list' id='you_poked'>
 										<tr>
+											<th>Photo</th>
 											<th>Name</th>
 											<th>Email</th>
 											<th>Number of Pokes</th>
@@ -84,7 +86,7 @@
 
 		public function get_poked_users($user_id)
 		{
-			$query = "SELECT users.id, users.first_name, users.last_name, users.email, users.created_at,
+			$query = "SELECT users.id, users.photo, users.first_name, users.last_name, users.email, users.created_at,
 					  pokes.my_user_id, pokes.other_user_id, 
                       COUNT(pokes.other_user_id) as number_of_pokes
                       FROM users
@@ -97,7 +99,7 @@
 
 		public function get_who_poked_me($user_id)
 		{
-			$query = "SELECT users.id, users.first_name, users.last_name, users.email,
+			$query = "SELECT users.id, users.photo, users.first_name, users.last_name, users.email,
 					  pokes.my_user_id, pokes.other_user_id, COUNT(pokes.my_user_id) AS number_of_pokes
 				      FROM pokes LEFT JOIN users ON users.id = pokes.my_user_id
 					  WHERE pokes.other_user_id ='".$user_id."'
@@ -126,9 +128,10 @@
 				$data["status"] = FALSE;
 				foreach($persons_poked_me as $person_poked_me)
 				{
+					$date = new DateTime($person_poked_me["created_at"]);
 					$poke_html .="<tr class='row_pokes'>
 					                <td>" .$person_poked_me["id"]. "</td>
-									<td>".date_format(date_create($person_poked_me["created_at"]),'g:ia \o\n l jS F Y')."</td>
+									<td>".$date->format('F d Y - h:i:s A')."</td>
 								  </tr>";
 				}
 				$data["message"] = $poke_html;
