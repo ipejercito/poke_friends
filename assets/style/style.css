@@ -61,6 +61,18 @@ ul.dropdown-menu li{
 	top:200px;
 }
 
+.message{
+	margin-left: 50px;
+	margin-top: 50px;
+	width:1000px;
+}
+
+.message_search{
+	margin-left: 145px;
+	margin-top: 50px;
+	width:1000px;
+}
+
 .message_generic{
 	margin-left: 50px;
 	margin-top: 50px;

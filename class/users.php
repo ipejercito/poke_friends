@@ -31,7 +31,6 @@ Class Users extends Database{
 					   WHERE users.first_name = '".mysqli_real_escape_string($this->connection, $_POST['first_name'])."'
 					   OR users.last_name ='".mysqli_real_escape_string($this->connection, $_POST['last_name'])."' 
 					   AND users.email='".mysqli_real_escape_string($this->connection, $_POST['email'])."'";
-
 		$user_in_db = $this->fetch_record($query_user);
 
 		if(count($user_in_db) > 1)
@@ -85,8 +84,6 @@ Class Users extends Database{
 			}
 			$data["message"] = $error_string;
 		}
-		
-
 		echo json_encode($data);
 	}
 
@@ -294,7 +291,6 @@ Class Users extends Database{
 		session_destroy();
 		header("location:../index.php");
 	}
-
 }
 
 $users = New Users();

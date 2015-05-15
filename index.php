@@ -52,6 +52,7 @@
 							window.location = data.url_redirect;
 						},2000);
 					}else{
+						$(".message_generic").hide();
 						$(".message_search").hide();
 						$(".message").html(data.message).fadeIn(500, function(){
 							$(this).delay(2000).fadeOut(500);
@@ -91,8 +92,9 @@
 				$.post(form.attr("action"), form.serialize(), function(data){
 					if(data.status){
 						$(".message_search").show();
-						$(".message").hide();
 						$(".message_search").html(data.message);
+						$(".message").hide();
+						$(".message_generic").hide();
 					}else{
 						$(".message_search").hide();
 						$(".message").html(data.message).fadeIn(500, function(){
@@ -182,10 +184,11 @@
 		</div>
 		<div class="spacer"></div>
 
-
+		<div class="col-md-12">
+			<div class="message_search"></div>
+		</div>
 		<div class="messages">
 			<div class="col-md-12">
-				<div class="message_search"></div>
 				<div class="message text-center"></div>
 				<div class="message_generic text-center"></div>
 			</div>

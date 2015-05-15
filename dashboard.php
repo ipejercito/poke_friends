@@ -110,7 +110,6 @@
 					}else{
 						$("#one_time").hide();
 						$(".modal_view_pokes").html(data.message).show();
-
 					}
 				},"json");
 
@@ -160,7 +159,7 @@
 
 				return false;
 			});
-
+			/*end of image uploads*/
 			
 		})
 	</script>

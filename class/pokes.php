@@ -35,8 +35,7 @@
 									  FROM users LEFT JOIN pokes 
 									  ON pokes.other_user_id = users.id
 									  WHERE pokes.my_user_id ='".$_SESSION['user_info']['user_id']."' AND
-									  pokes.other_user_id = '".$you_poked_info["other_user_id"]."'";
-									  
+									  pokes.other_user_id = '".$you_poked_info["other_user_id"]."'";							  
 			$result_get_recent_poke = $this->fetch_all($query_get_recent_poke);
 
 			$query_count_poke = "SELECT pokes.my_user_id,
@@ -71,7 +70,6 @@
 				$data["recent_user_poke"] = $format_recent_poke;
 				$data["poke_first_instance"] = $poke_first_instance;
 				$data["one_poke"] = $one_poke;
-				
 			}
 			else
 			{
@@ -94,7 +92,6 @@
 					  WHERE pokes.my_user_id ='".$user_id."'
 					  GROUP BY users.id";
 			return $this->fetch_all($query);
-
 		}
 
 		public function get_who_poked_me($user_id)
@@ -136,7 +133,6 @@
 				}
 				$data["message"] = $poke_html;
 			}
-
 			echo json_encode($data);
 		}
 
@@ -166,7 +162,6 @@
 										</form>
 									  </li>";
 				}
-
 				$htm_page_num .= "	</ul>
 								</nav>";
 			}
@@ -186,8 +181,8 @@
 						   FROM pokes LEFT JOIN users ON users.id = pokes.my_user_id
 						   WHERE pokes.other_user_id ='".$_SESSION["user_info"]["user_id"]."'
 						   AND pokes.my_user_id =".$_POST["other_user_id"]. " LIMIT " .$offset. ",".$per_page."";
-
 				$pokes = $this->fetch_all($query);
+				
 				foreach($pokes as $poke)
 				{
 					$poke_html .="<tr class='row_pokes'>
